@@ -1,5 +1,5 @@
 [package]
-name = "Small-xxHash"
+name = "Small_xxHash"
 version = "0.1.0"
 edition = "2021"
 
