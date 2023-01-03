@@ -26,6 +26,16 @@ impl SmallXXHash {
     pub fn rotateLeft(data: u32, steps: i32) -> u32 {
         (data << steps) | (data >> (32 - steps))
     }
+
+    pub fn get() -> u32 {
+        let avalanche: u32 = accumulator;
+		avalanche ^= avalanche >> 15;
+		avalanche *= primeB;
+		avalanche ^= avalanche >> 13;
+		avalanche *= primeC;
+		avalanche ^= avalanche >> 16;
+		return avalanche;
+    }
 }
 
 impl Default for SmallXXHash {
