@@ -11,16 +11,16 @@ fn frac(x: f32) -> f32 {
 }
 
 fn main() {
-    let mut imgbuf: image::ImageBuffer<Luma<u8>, Vec<_>> = image::ImageBuffer::new(32 as u32, 32 as u32);
-
-    for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-        let hash = (x + y) as f32;
-        println!("Hash value: '{hash}' based on: '{x} + {y}'");
-        let g = (frac(hash * 0.381) * 256.0) as u8;
+    let mut imgbuf: image::ImageBuffer<Luma<u8>, Vec<_>> = image::ImageBuffer::new(41 as u32, 41 as u32);
+    
+    let mut i = 0;
+    for (_x, _y, pixel) in imgbuf.enumerate_pixels_mut() {
+        let g = (frac(i as f32 * 0.381) * 256.0) as u8;
+        println!("Hash value: '{g}' at index: '{i}'");
         *pixel = image::Luma([g]);
+        i += 1;
     }
-    //let v : i32 =  
-    //let u : i32 = 
+
     imgbuf.save("test.png").unwrap();
 
     println!("Done! Image ready!");
