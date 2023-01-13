@@ -1,5 +1,6 @@
 use image::*;
-
+mod hash;
+use hash::SmallXXHash;
 /*
 struct HashVisualization {
     resolution : i32,
@@ -14,21 +15,28 @@ fn main() {
     let mut imgbuf: image::ImageBuffer<Luma<u8>, Vec<_>> = image::ImageBuffer::new(32 as u32, 32 as u32);
     
     /*let resolution = 32 * 32;
-    let invResolution = 1.0 / resolution as f32;
+    let inv_resolution = 1.0 / resolution as f32;
     for (i, pixel) in imgbuf.pixels_mut().enumerate() {
-        let v = (invResolution * i as f32 + 0.00001).floor();
-        let u = (i as f32 - resolution as f32 * v);
-        let g = (frac(u * v * 0.381) * 256.0) as u8;
+        let v = (inv_resolution * (i as f32) + 0.00001).floor() as u32;
+        let u = (i as u32) - resolution * v;
+        let mut hash = SmallXXHash::new(0);
+        hash.eat(u);
+        hash.eat(v);
+        let g = hash.get() as u8;
         println!("U: '{u}' V: '{v}' Grayscale: '{g}'");
         *pixel = image::Luma([g]);
     }*/
 
     for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-        let g = (frac(x as f32 * (31 - y) as f32 * 0.381) * 256.0) as u8;
+        let mut hash = SmallXXHash::new(0);
+        hash.eat((x as i32 - 16) as u32);
+        hash.eat((15 - y as i32) as u32);
+        let g = hash.get() as u8;
+        println!("X: '{x}' Y: '{y}' Grayscale: '{g}'");
         *pixel = image::Luma([g]);
     }
 
-    imgbuf.save("test.png").unwrap();
+    imgbuf.save("test1.png").unwrap();
 
     println!("Done! Image ready!");
 }

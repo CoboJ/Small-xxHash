@@ -1,51 +1,36 @@
-pub struct SmallXXHash {
-    primeA : u32,
-    primeB : u32,
-    primeC : u32,
-    primeD : u32,
-    primeE : u32,
+const PRIME_A : u32 = 0b10011110001101110111100110110001;
+const PRIME_B : u32 = 0b10000101111010111100101001110111;
+const PRIME_C : u32 = 0b11000010101100101010111000111101;
+const PRIME_D : u32 = 0b00100111110101001110101100101111;
+const PRIME_E : u32 = 0b00010110010101100110011110110001;
 
+pub struct SmallXXHash {
     accumulator : u32
 }
 
 impl SmallXXHash {
-    pub fn new(seed: i32) -> SmallXXHash {
+    pub fn new(seed: u32) -> SmallXXHash {
         SmallXXHash {
-            accumulator: seed as u32 + primeE
+            accumulator: seed.wrapping_add(PRIME_E)
         }
     }
 
-    pub fn eat(data : i32) {
-        accumulator = RotateLeft(accumulator + data as u32 * primeC, 17) * primeD;
+    pub fn eat(&mut self, data : u32) {
+        self.accumulator = self.accumulator.wrapping_add(data.wrapping_mul(PRIME_C)).rotate_left(17).wrapping_mul(PRIME_D);
+        //self.accumulator = self.rotate_left(self.accumulator + data * PRIME_C, 17) * PRIME_D;
     }
 
-    pub fn eat(data : u8) {
-        accumulator = RotateLeft(accumulator + data as u8 * primeE, 11) * primeA;
-    }
+    /*pub fn rotate_left(&self, data: u32, steps: u32) -> u32 {
+        data.wrapping_shl(steps) | data.wrapping_shr(32 - steps)
+    }*/
 
-    pub fn rotateLeft(data: u32, steps: i32) -> u32 {
-        (data << steps) | (data >> (32 - steps))
-    }
-
-    pub fn get() -> u32 {
-        let avalanche: u32 = accumulator;
-		avalanche ^= avalanche >> 15;
-		avalanche *= primeB;
-		avalanche ^= avalanche >> 13;
-		avalanche *= primeC;
-		avalanche ^= avalanche >> 16;
+    pub fn get(&self) -> u32 {
+        let mut avalanche: u32 = self.accumulator;
+		avalanche ^= avalanche.wrapping_shr(15);
+		avalanche = avalanche.wrapping_mul(PRIME_B);
+		avalanche ^= avalanche.wrapping_shr(13);
+		avalanche = avalanche.wrapping_mul(PRIME_C);
+		avalanche ^= avalanche.wrapping_shr(16);
 		return avalanche;
-    }
-}
-
-impl Default for SmallXXHash {
-    fn default() -> SmallXXHash {
-        SmallXXHash {
-            primeA: 0b10011110001101110111100110110001,
-            primeB: 0b10000101111010111100101001110111,
-            primeC: 0b11000010101100101010111000111101,
-            primeD: 0b00100111110101001110101100101111,
-            primeE: 0b00010110010101100110011110110001,
-        }
     }
 }
