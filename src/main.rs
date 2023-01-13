@@ -28,11 +28,10 @@ fn main() {
     }*/
 
     for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-        let mut hash = SmallXXHash::new(0);
-        hash.eat((x as i32 - 16) as u32);
-        hash.eat((15 - y as i32) as u32);
-        let g = hash.get() as u8;
-        println!("X: '{x}' Y: '{y}' Grayscale: '{g}'");
+        let u = x as i32 - 16;
+        let v = 15 - y as i32;
+        let g = SmallXXHash::new(0).eat(u).eat(v).get() as u8;
+        println!("U: '{u}' V: '{v}' Grayscale: '{g}'");
         *pixel = image::Luma([g]);
     }
 
