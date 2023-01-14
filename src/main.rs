@@ -1,41 +1,8 @@
-use image::*;
 mod hash;
-use hash::SmallXXHash;
-/*
-struct HashVisualization {
-    resolution : i32,
-    hashes : Vec<u32>,
-}*/
-
-fn frac(x: f32) -> f32 {
-    x - x.floor()
-}
+mod hash_visualization;
+use hash_visualization::HashVisualization;
 
 fn main() {
-    let mut imgbuf: image::ImageBuffer<Luma<u8>, Vec<_>> = image::ImageBuffer::new(32 as u32, 32 as u32);
-    
-    /*let resolution = 32 * 32;
-    let inv_resolution = 1.0 / resolution as f32;
-    for (i, pixel) in imgbuf.pixels_mut().enumerate() {
-        let v = (inv_resolution * (i as f32) + 0.00001).floor() as u32;
-        let u = (i as u32) - resolution * v;
-        let mut hash = SmallXXHash::new(0);
-        hash.eat(u);
-        hash.eat(v);
-        let g = hash.get() as u8;
-        println!("U: '{u}' V: '{v}' Grayscale: '{g}'");
-        *pixel = image::Luma([g]);
-    }*/
-
-    for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-        let u = x as i32 - 16;
-        let v = 15 - y as i32;
-        let g = SmallXXHash::new(0).eat(u).eat(v).get() as u8;
-        println!("U: '{u}' V: '{v}' Grayscale: '{g}'");
-        *pixel = image::Luma([g]);
-    }
-
-    imgbuf.save("test1.png").unwrap();
-
+    HashVisualization::generate_image(32, 32, String::from("test.png"));
     println!("Done! Image ready!");
 }
